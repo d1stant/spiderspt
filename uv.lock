@@ -523,12 +523,13 @@ wheels = [
 ]
 
 [[package]]
-name = "spcrawler"
+name = "spiderspt"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "exejs" },
     { name = "loguru" },
+    { name = "requests" },
 ]
 
 [package.dev-dependencies]
@@ -540,6 +541,7 @@ dev = [
 requires-dist = [
     { name = "exejs", specifier = ">=0.0.6" },
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "requests", specifier = ">=2.32.5" },
 ]
 
 [package.metadata.requires-dev]
