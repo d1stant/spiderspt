@@ -2,7 +2,7 @@ from base64 import b64encode
 
 from spiderspt.ocr_captcha_ import OCRYunMa
 
-yunma = OCRYunMa("e9e5g2V7B6igZHYEkYehYhDP-RaA0cDGo_7snYiFmQA")
+yunma = OCRYunMa("")
 
 # 通用测试
 # with open("./test/ocr_captcha_/ocr_captcha_test_image.jpg", "rb") as f:
