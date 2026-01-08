@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from loguru import logger
+from loguru import logger as __logger
 
 log_dir: Path = Path("./logs")
 log_dir.mkdir(parents=True, exist_ok=True)
@@ -14,21 +14,21 @@ if len(log_files) > log_max_num:
     for old_log in log_files[:-19]:
         old_log.unlink()
 
-logger.remove()  # 移除默认日志处理器
+__logger.remove()  # 移除默认日志处理器
 
 # 为每个日志级别设置颜色
-logger.level("DEBUG", color="<fg #8B658B>")
-logger.level("INFO", color="<fg #228B22>")
-logger.level("WARNING", color="<fg #FFD700>")
-logger.level("ERROR", color="<fg #ff00cc>")
-logger.level("CRITICAL", color="<fg #CD0000><bold>")
+__logger.level("DEBUG", color="<fg #8B658B>")
+__logger.level("INFO", color="<fg #228B22>")
+__logger.level("WARNING", color="<fg #FFD700>")
+__logger.level("ERROR", color="<fg #ff00cc>")
+__logger.level("CRITICAL", color="<fg #CD0000><bold>")
 
 # 日志格式
 __console_log_format: str = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level:^8}</level> : <level>{message}</level>"
 __file_log_format: str = "{time:YYYY-MM-DD HH:mm:ss} | {process.name} | {thread.name} | {file:>10}:{line}:{function}() | {level} : {message}"
 
 # 添加文件日志处理器
-logger.add(
+__logger.add(
     sink=log_dir / "log_{time:YYYY-MM-DD HH-mm-ss}.log",
     # sink=sys.stdout,
     level="DEBUG",  # 级别
@@ -39,11 +39,11 @@ logger.add(
     enqueue=True,
     backtrace=True,  # 记录堆栈
     diagnose=True,  # 堆栈跟踪
-    mode="w",  # 每次运行新建
+    mode="a",
 )
 
 # 添加控制台日志处理器
-logger.add(
+__logger.add(
     sink=sys.stdout,
     level="INFO",
     format=__console_log_format,
@@ -52,30 +52,4 @@ logger.add(
 )
 
 
-class PrintLogger:
-    def info(self, *args) -> None:
-        msg: str = " ".join(map(str, args))
-        logger.info(msg)
-
-    def debug(self, *args) -> None:
-        msg: str = " ".join(map(str, args))
-        logger.debug(msg)
-
-    def warning(self, *args) -> None:
-        msg: str = " ".join(map(str, args))
-        logger.warning(msg)
-
-    def error(self, *args) -> None:
-        msg: str = " ".join(map(str, args))
-        logger.error(msg)
-
-    def critical(self, *args) -> None:
-        msg: str = " ".join(map(str, args))
-        logger.critical(msg)
-
-    def exception(self, err) -> None:
-        # msg: str = " ".join(map(str, args))
-        logger.exception(err)
-
-
-print_log: PrintLogger = PrintLogger()
+print_log = __logger
