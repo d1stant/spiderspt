@@ -1,57 +1,52 @@
-import os
 import sys
 from pathlib import Path
+from typing import cast
 
-import psutil
 from loguru import logger as __logger
-
-log_dir: Path = Path("./logs")
-log_dir.mkdir(parents=True, exist_ok=True)
-log_max_num: int = 40  # 最大日志文件数
-log_files: list[Path] = sorted(
-    log_dir.glob("*.log"), key=lambda x: x.stat().st_ctime
-)  # 对日志文件进行排序
-# 删除多余的
-if len(log_files) > log_max_num:
-    for old_log in log_files[:-19]:
-        old_log.unlink()
-
-__logger.remove()  # 移除默认日志处理器
-
-# 为每个日志级别设置颜色
-__logger.level("DEBUG", color="<fg #8B658B>")
-__logger.level("INFO", color="<fg #228B22>")
-__logger.level("WARNING", color="<fg #FFD700>")
-__logger.level("ERROR", color="<fg #ff00cc>")
-__logger.level("CRITICAL", color="<fg #CD0000><bold>")
-
-# 日志格式
-__console_log_format: str = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level:^8}</level> : <level>{message}</level>"
-__file_log_format: str = "{time:YYYY-MM-DD HH:mm:ss} | {process.name} | {thread.name} | {file:>10}:{line}:{function}() | {level} : {message}"
-# 添加文件日志处理器
-__logger.add(
-    sink=log_dir
-    / f"log_ppid{psutil.Process().ppid()}_pid{os.getpid()}_{{time:YYYY-MM-DD HH-mm-ss}}.log",
-    # sink=sys.stdout,
-    level="DEBUG",  # 级别
-    format=__file_log_format,
-    rotation="10 MB",  # 设置大小
-    retention=log_max_num,  # 最多保留20个日志文件
-    encoding="utf-8",
-    enqueue=True,
-    backtrace=True,  # 记录堆栈
-    diagnose=True,  # 堆栈跟踪
-    mode="a",
-)
-
-# 添加控制台日志处理器
-__logger.add(
-    sink=sys.stdout,
-    level="INFO",
-    format=__console_log_format,
-    colorize=True,
-    enqueue=True,
-)
+from loguru._logger import Logger
 
 
-print_log = __logger
+def init_logger() -> Logger:
+    log_dir: Path = Path("./logs")
+    log_dir.mkdir(parents=True, exist_ok=True)
+    max_log_file = 40  # 最大日志文件数
+    log_files: list[Path] = sorted(
+        log_dir.glob("*.log"), key=lambda x: x.stat().st_ctime
+    )  # 对日志文件进行排序
+    # 删除多余的日志文件
+    if len(log_files) > max_log_file:
+        for old_log in log_files[: -(max_log_file - 1)]:
+            old_log.unlink()
+
+    __logger.remove()  # 移除默认日志处理器
+    # 为每个日志级别设置颜色
+    __logger.level("DEBUG", color="<fg #8B658B>")
+    __logger.level("INFO", color="<fg #228B22>")
+    __logger.level("WARNING", color="<fg #FFD700>")
+    __logger.level("ERROR", color="<fg #ff00cc>")
+    __logger.level("CRITICAL", color="<fg #CD0000><bold>")
+    # 日志格式
+    __console_log_format: str = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level:^8}</level> : <level>{message}</level>"
+    __file_log_format: str = "{time:YYYY-MM-DD HH:mm:ss} | {process.name} | {thread.name} | {file:>10}:{line}:{function}() | {level} : {message}"
+    # 添加文件日志处理器
+    __logger.add(
+        sink=log_dir / "{time:YYYY-MM-DD HH-mm-ss}.log",
+        level="DEBUG",  # 级别
+        format=__file_log_format,
+        rotation="10 MB",  # 设置大小
+        retention=max_log_file,  # 最多保留20个日志文件
+        encoding="utf-8",
+        enqueue=True,
+        backtrace=True,  # 记录堆栈
+        diagnose=True,  # 堆栈跟踪
+        mode="a",
+    )
+    # 添加控制台日志处理器
+    __logger.add(
+        sink=sys.stdout,
+        level="INFO",
+        format=__console_log_format,
+        colorize=True,
+        enqueue=True,
+    )
+    return cast(Logger, __logger)

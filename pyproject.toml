@@ -13,10 +13,13 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "distant", email = "2560389931@qq.com" }]
 dependencies = [
+    "ddddocr>=1.6.0",
     "exejs>=0.0.6",
     "loguru>=0.7.3",
     "psutil>=7.2.1",
+    "pycryptodome>=3.23.0",
     "requests>=2.32.5",
+    "wmi>=1.5.1",
 ]
 
 [dependency-groups]

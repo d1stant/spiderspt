@@ -1,6 +1,6 @@
 from base64 import b64encode
 
-from spiderspt.ocr_captcha_ import OCRYunMa
+from spiderspt.captcha_ import OCRYunMa
 
 yunma = OCRYunMa("")
 
